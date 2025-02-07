@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:weather_app/services/db_helper.dart';
 import '../models/weather_model.dart';
 import '../services/weather_service.dart';
@@ -6,10 +7,18 @@ import '../services/weather_service.dart';
 class WeatherProvider with ChangeNotifier {
   final List<WeatherModel> _cities = [];
   final WeatherService _weatherService = WeatherService();
-  final String _apiKey = '87507141cb9843fb9ec135229250502';
   final DBHelper _dbHelper = DBHelper();
+  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
   List<WeatherModel> get cities => _cities;
+
+  Future<void> saveApiKey(String apiKey) async {
+    await _secureStorage.write(key: 'apiKey', value: apiKey);
+  }
+
+  Future<String?> getApiKey() async {
+    return await _secureStorage.read(key: 'apiKey');
+  }
 
   Future<void> fetchAndSetCities() async {
     final dbCities = await _dbHelper.getCities();
@@ -25,7 +34,12 @@ class WeatherProvider with ChangeNotifier {
     }
 
     try {
-      final weather = await _weatherService.fetchWeather(cityName, _apiKey);
+      final apiKey = await getApiKey();
+      if (apiKey == null) {
+        throw Exception('API key is not set');
+      }
+
+      final weather = await _weatherService.fetchWeather(cityName, apiKey);
       if (weather != null) {
         _cities.add(weather);
         await _dbHelper.insertCity(weather);

@@ -26,6 +26,7 @@ dependencies:
   sqflite: ^2.0.0+4
   path: ^1.8.2
   sqflite_common_ffi: ^2.0.0+4
+  flutter_secure_storage: ^9.2.4
 
 dev_dependencies:
   flutter_test:
