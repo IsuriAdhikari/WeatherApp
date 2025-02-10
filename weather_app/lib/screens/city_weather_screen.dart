@@ -56,7 +56,7 @@ class CityWeatherScreen extends StatelessWidget {
             ),
             const Divider(),
             Text(
-              '3-Day Forecast',
+              '5-Day Forecast',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             ForecastSlider(
